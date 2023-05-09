@@ -6,8 +6,8 @@ def create_embed(mapping):
     description="~~~~~~~~~~~~~~~~~~~~~~",
   )
   embed.add_field(
-    name="Margin detected -> " + mapping["Margin"],
-    value="Previous listing -> "+mapping["prevlisting"]+"\n"+"Newest listing -> "+mapping["lowest"],
+    name="Margin detected -> " + str(mapping["Margin"]),
+    value="Previous listing -> "+str(mapping["prevlisting"])+"\n"+"Newest listing -> "+str(mapping["lowest"]),
     inline=True
   )
   return embed
@@ -15,12 +15,19 @@ def create_embed(mapping):
 def create_dash(conf):
   embed = discord.Embed(
     title="At A Glance",
-    description="Stockx Margin -> "+conf["Smargin"]+"\n Goat Margin -> "+conf["Gmargin"]+"\n CURRENTLY TRACKING...",
+    description="Stockx Margin -> "+str(conf["Smargin"])+"%\n\n Goat Margin -> "+str(conf["Gmargin"])+"%\n\n CURRENTLY TRACKING ->",
   )
-  for kw in conf["Keywords"]:
+  if len(conf["Keywords"]) == 0:
     embed.add_field(
-      name="~~~~~~~~~~~~~",
-      value=kw,
-      inline=False
+      name="~~~~~~~~~~~~~~",
+      value="No keywords tracked yet!",
+      inline=True
     )
-    return embed
+  else:
+    for kw in conf["Keywords"]:
+      embed.add_field(
+        name="~~~~~~~~~~~~~",
+        value=kw,
+        inline=False
+      )
+  return embed
