@@ -1,9 +1,8 @@
-import aiohttp
+import stockx
 import discord
 import json
 import asyncio
 from discord.ext import commands
-from bs4 import BeautifulSoup
 
 TOKEN = "MTEwNTMwNTg2NTM1NzExNTUwMw.GbE76-.yh0GFkaPP25Oa2Hlp1zO_2nafHYOxwET9t8Evs"
 
@@ -15,13 +14,11 @@ bot = commands.Bot(command_prefix='/',help_command=None,case_insensitive=True,in
 #Init Boot
 @bot.event
 async def on_ready():
-  await StockxMonitor()
+  await stockx.init()
   print("Starting up...")
 
-async def init():
-  await Stockx.Monitor()
   
-  
+#Commands
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(
@@ -54,3 +51,6 @@ async def help(ctx):
       inline=True
     )
     await ctx.send(embed=embed)
+
+#Run Bot
+bot.run(TOKEN)
