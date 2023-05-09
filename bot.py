@@ -5,6 +5,8 @@ import asyncio
 from discord.ext import commands
 from bs4 import BeautifulSoup
 
+TOKEN = "MTEwNTMwNTg2NTM1NzExNTUwMw.GbE76-.yh0GFkaPP25Oa2Hlp1zO_2nafHYOxwET9t8Evs"
+
 intents = discord.Intents.default()
 intents.messages = True
 
@@ -15,6 +17,9 @@ bot = commands.Bot(command_prefix='/',help_command=None,case_insensitive=True,in
 async def on_ready():
   await StockxMonitor()
   print("Starting up...")
+
+async def init():
+  await Stockx.Monitor()
   
   
 @bot.command()
