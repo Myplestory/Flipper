@@ -38,10 +38,10 @@ async def on_ready():
       for entry in pducts:
         emb = embeds.create_embed(entry)
         await channel.send(embed=emb)
-    time.sleep(300)
+    time.sleep(15)
   print("Starting up...")
 
-  
+
 #Commands
 @bot.command()
 async def setmargin(ctx,*args):
@@ -49,29 +49,31 @@ async def setmargin(ctx,*args):
     await channel.send("Invalid number of args!")
   else:
     if args[0] == "s":
-      conf.update({"Smargin":{"$exists":True}},{"$set":{"Smargin":args[1]}})
+      conffile.update({"$set":{"Smargin":args[1]}})
+      x = conf.count({})
+      print(x)
     if args[0] == "g":
-      conf.update({"Gmargin":{"$exists":True}},{"$set":{"Gmargin":args[1]}})
+      conffile.update({"$set":{"Gmargin":args[1]}})
     await channel.send("Margins set successfully! Restart to see changes...")
 
 @bot.command()
 async def addquery(ctx,*args):
   s = " ".join(args[:])
-  if s in conf["Keywords"]:
+  if s in conffile["Keywords"]:
     await channel.send("Keyword already tracked!")
   else:
-    conf.update({"Smargin":{"$exists":True}},{"$push": {"Keywords":s}})
+    conffile.update({"$push": {"Keywords":s}})
     await channel.send(s + " added to tracking!")
     
 @bot.command()
 async def removequery(ctx,*args):
   s = " ".join(args[:])
-  if s in conf["Keywords"]:
-    l = conf["Keywords"]
+  if s in conffile["Keywords"]:
+    l = conffile["Keywords"]
     for ind,x in enumerate(l):
       if x == s:
         l.pop(ind)
-      conf.update({"Smargin":{"$exists":True}},{"$set": {"Keywords":l}})
+      conffile.update({"$set": {"Keywords":l}})
       print("Properly removed keyword!")
     await channel.send("Removed keyword successfully!")
   else:

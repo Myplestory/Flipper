@@ -17,4 +17,4 @@ class collectionobject:
     if self.count(query) != 0:
       self.collection.delete_one(query)
   def update(self,key,query):
-    self.collection.update_one(key,query, upsert = False)
+    self.collection.find_one_and_update(key,query, upsert = False,returnNewDocument=True)
