@@ -41,14 +41,13 @@ async def on_ready():
       margin = colobj.findconfig({})["Smargin"]
       kw = colobj.findconfig({})["Keywords"]
       pducts = await stockx.monitor(sxcol,margin,kw)
+      print(pducts)
       if len(pducts) != 0:
         await channel.send(bot.default_role.mention)
         for entry in pducts:
           emb = embeds.create_embed(entry)
           await channel.send(embed=emb)
-      await asyncio.sleep(5)
-    else:
-      await asyncio.sleep(10)
+      await asyncio.sleep(15)
   
 
 

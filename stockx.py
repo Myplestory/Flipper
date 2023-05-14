@@ -47,7 +47,7 @@ async def monitor(col,margin,kw):
               }
             returnval.append(post)
           col.update({"name":name},{"lowest":newlowest})
-      Futures = asyncio.ensure_future(getInfo(item,col,retval) for item in productlist)
+      Futures = [asyncio.ensure_future(getInfo(item,col,retval) for item in productlist)]
       print("Gathering futures...")
       await asyncio.gather(*Futures)
       return retval
