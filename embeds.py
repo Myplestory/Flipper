@@ -6,8 +6,8 @@ def create_embed(mapping):
     description="~~~~~~~~~~~~~~~~~~~~~~",
   )
   embed.add_field(
-    name="Margin detected -> " + str(mapping["Margin"]),
-    value="Previous listing -> "+str(mapping["prevlisting"])+"\n"+"Newest listing -> "+str(mapping["lowest"]),
+    name="Margin detected -> " + str(mapping["Margin"]) + "%",
+    value="Previous listing -> $"+str(mapping["prevlisting"])+"\n"+"Newest listing -> $"+str(mapping["lowest"]),
     inline=True
   )
   return embed

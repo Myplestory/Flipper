@@ -5,6 +5,7 @@ import dbapi
 from bs4 import BeautifulSoup
 
 stockxurl = "https://stockx.com/search/recent-asks?s="
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
 
 def init():
   global Stockx
@@ -22,31 +23,45 @@ async def monitor(col,margin,kw):
       soup = BeautifulSoup(page,'html.parser')
       print("Soup created!")
       productlist = soup.find_all('div',{'class' : "css-cp13gg"})
+      print("productlist -> " + str(productlist))
       retval = []
       #processing each product
       def getInfo(product,col,returnval):
-        name = product.find("p", {"class": "chakra-text css-3lpefb"})
-        newlowest = product.find("p", {"class": "chakra-text css-nsvdd9"})
+        print(product.contents)
+        namelist = product.find_all("p", {"class": "chakra-text css-3lpefb"})
+        name = namelist[0].contents[0]
+        
+        print("name -> " + name)
+        newlowestlist = product.find_all("p", {"class": "chakra-text css-nsvdd9"})
+        newlowest = int(newlowestlist[0].contents[0][1:].strip().replace(',',''))
+        print("Newlowest -> " + str(newlowest))
         #if nonexist, add to db/identify with kw used to find
-        if col.count({"name": name},"stockx") == 0:
+        if col.countstockx({"name": name}) == 0:
           post = {
             "name": name,
             "lowest": newlowest,
             "kw" : k
                   }
-          col.insert(post)
+          col.insertstockx(post)
           print("Successfully stored "+name+"!")
         #if exists
-        elif col.count({"name": name},"stockx") != 0:
-          fetched = col.stockx.find({"name": name})
-          if (newlowest/fetched["lowest"]) <= 100-margin:
+        elif col.countstockx({"name": name}) != 0:
+          fetched = col.findstockx({"name": name})
+          oldlowest = fetched["lowest"]
+          print(oldlowest)
+          print(margin)
+          if ((newlowest)/(oldlowest)) < 100-int(margin.strip().replace("'","")):
+            linkdiv = soup.find_all("div", {"class":"css-pnc6ci"})
+            link = linkdiv.contents[1]["href"]
+            print(link)
             post = {
               "name":name,
               "lowest":newlowest,
-              "prevlisting":fetched["lowest"], "Margin":newlowest/fetched["lowest"]
+              "prevlisting":oldlowest,
+              "Margin": 100 - float(newlowest)/float(oldlowest)
               }
             returnval.append(post)
-          col.update({"name":name},{"lowest":newlowest})
+          col.updatestockx({"name":name},{"$set":{"lowest":newlowest}})
       Futures = [asyncio.ensure_future(getInfo(item,col,retval) for item in productlist)]
       print("Gathering futures...")
       await asyncio.gather(*Futures)
@@ -54,5 +69,5 @@ async def monitor(col,margin,kw):
       
  
 async def Grab(sess,fullurl):
-  async with sess.get(fullurl) as response:
+  async with sess.get(fullurl,headers=headers) as response:
     return await response.text()

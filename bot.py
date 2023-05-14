@@ -37,17 +37,16 @@ async def on_ready():
     print(colobj.findconfig({}))
     if kwsize != 0:
       print("scraping...")
-      sxcol = colobj.stockx
       margin = colobj.findconfig({})["Smargin"]
       kw = colobj.findconfig({})["Keywords"]
-      pducts = await stockx.monitor(sxcol,margin,kw)
+      pducts = await stockx.monitor(colobj,margin,kw)
       print(pducts)
       if len(pducts) != 0:
-        await channel.send(bot.default_role.mention)
+        await channel.send(content="Citrine found a item!")
         for entry in pducts:
           emb = embeds.create_embed(entry)
           await channel.send(embed=emb)
-      await asyncio.sleep(15)
+    await asyncio.sleep(60)
   
 
 

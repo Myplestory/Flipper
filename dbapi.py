@@ -4,7 +4,7 @@ import pymongo
 class collectionobject:
   def __init__(self):
     dbclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    collectionobject = dbclient["Citrinev4"]
+    collectionobject = dbclient["Citrinev5"]
     self.stockx = collectionobject["Stockx"]
     self.goat = collectionobject["Goat"]
     self.config = collectionobject["Config"]
@@ -20,9 +20,9 @@ class collectionobject:
       return self.config.count_documents(query)
   # finds
   def findstockx(self,query):
-      return self.stockx.find(query)
+      return self.stockx.find_one(query)
   def findgoat(self,query):
-      return self.goat.find(query)
+      return self.goat.find_one(query)
   def findconfig(self,query):
       return self.config.find_one(query)
   # config
