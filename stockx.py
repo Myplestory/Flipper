@@ -28,7 +28,7 @@ async def monitor(col,margin,kw):
         name = product.find("p", {"class": "chakra-text css-3lpefb"})
         newlowest = product.find("p", {"class": "chakra-text css-nsvdd9"})
         #if nonexist, add to db/identify with kw used to find
-        if col.count({"name": name}) == 0:
+        if col.count({"name": name},"stockx") == 0:
           post = {
             "name": name,
             "lowest": newlowest,
@@ -37,8 +37,8 @@ async def monitor(col,margin,kw):
           col.insert(post)
           print("Successfully stored "+name+"!")
         #if exists
-        elif col.count({"name": name}) != 0:
-          fetched = col.find({"name": name})
+        elif col.count({"name": name},"stockx") != 0:
+          fetched = col.stockx.find({"name": name})
           if (newlowest/fetched["lowest"]) <= 100-margin:
             post = {
               "name":name,

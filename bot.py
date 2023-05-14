@@ -1,9 +1,9 @@
 import stockx
-import config
 import embeds
 import discord
 import json
 import asyncio
+import dbapi
 import time
 from discord.ext import commands
 
@@ -17,29 +17,39 @@ bot = commands.Bot(command_prefix='/',help_command=None,case_insensitive=True,in
 #Init Boot
 @bot.event
 async def on_ready():
+  print("Starting up...")
   global channel
   channel = bot.get_channel(1105583257690579014)
   print("channel grabbed!")
-  global conf
-  conf = config.init()
-  print("config grabbed!")
-  global sxcol
-  sxcol = stockx.init()
-  print("Sx db grabbed!")
-  global conffile
-  conffile = conf.collection.find_one({})
-  kwsize = conf.collection.find_one({"Keywords": {"$gt":1}})
-  print(kwsize)
-  while kwsize != None:
-    print("scraping...")
-    pducts = await stockx.monitor(sxcol,conffile["Smargin"],conffile["Keywords"])
-    if len(pducts) != 0:
-      await channel.send(bot.default_role.mention)
-      for entry in pducts:
-        emb = embeds.create_embed(entry)
-        await channel.send(embed=emb)
-    time.sleep(15)
-  print("Starting up...")
+  global colobj
+  colobj = dbapi.collectionobject()
+  print("db initialized!")
+  #configuring configs
+  if colobj.countconfig({}) == 0:
+    print("Configuring...")
+    colobj.insertconfig({"Smargin": 20,"Gmargin": 20,"Keywords":[]})
+  print("configured!")
+  print("configs found ... " + str(colobj.findconfig({})))
+  while True:
+    kwsize = colobj.findconfig({})
+    kwsize = len(kwsize["Keywords"])
+    print("loop entered successfully!")
+    print(colobj.findconfig({}))
+    if kwsize != 0:
+      print("scraping...")
+      sxcol = colobj.stockx
+      margin = colobj.findconfig({})["Smargin"]
+      kw = colobj.findconfig({})["Keywords"]
+      pducts = await stockx.monitor(sxcol,margin,kw)
+      if len(pducts) != 0:
+        await channel.send(bot.default_role.mention)
+        for entry in pducts:
+          emb = embeds.create_embed(entry)
+          await channel.send(embed=emb)
+      await asyncio.sleep(5)
+    else:
+      await asyncio.sleep(10)
+  
 
 
 #Commands
@@ -49,31 +59,31 @@ async def setmargin(ctx,*args):
     await channel.send("Invalid number of args!")
   else:
     if args[0] == "s":
-      conffile.update({"$set":{"Smargin":args[1]}})
-      x = conf.count({})
-      print(x)
+      colobj.updateconfig({},{"$set":{"Smargin":args[1]}})
     if args[0] == "g":
-      conffile.update({"$set":{"Gmargin":args[1]}})
-    await channel.send("Margins set successfully! Restart to see changes...")
+      colobj.updateconfig({"ID":"Config"},{"$set":{"Gmargin":args[1]}})
+    await channel.send("Margins set successfully!")
 
 @bot.command()
 async def addquery(ctx,*args):
   s = " ".join(args[:])
+  conffile = colobj.findconfig({})
   if s in conffile["Keywords"]:
     await channel.send("Keyword already tracked!")
   else:
-    conffile.update({"$push": {"Keywords":s}})
+    colobj.updateconfig({},{"$push": {"Keywords":s}})
     await channel.send(s + " added to tracking!")
     
 @bot.command()
 async def removequery(ctx,*args):
   s = " ".join(args[:])
+  conffile = colobj.findconfig({})
   if s in conffile["Keywords"]:
     l = conffile["Keywords"]
     for ind,x in enumerate(l):
       if x == s:
         l.pop(ind)
-      conffile.update({"$set": {"Keywords":l}})
+      colobj.updateconfig({},{"$set": {"Keywords":l}})
       print("Properly removed keyword!")
     await channel.send("Removed keyword successfully!")
   else:
@@ -81,6 +91,7 @@ async def removequery(ctx,*args):
     
 @bot.command()
 async def dash(ctx):
+  conffile = colobj.findconfig({})
   mapping = {
     "Smargin":conffile["Smargin"],
     "Gmargin":conffile["Gmargin"],
@@ -124,4 +135,6 @@ async def help(ctx):
     await channel.send(embed=embed)
 
 #Run Bot
-bot.run(TOKEN)
+if __name__ == "__main__":
+  loop = asyncio.get_event_loop()
+  loop.run_until_complete(bot.run(TOKEN))
