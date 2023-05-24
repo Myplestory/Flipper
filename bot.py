@@ -1,10 +1,8 @@
 import stockx
 import embeds
 import discord
-import json
 import asyncio
 import dbapi
-import time
 from discord.ext import commands
 
 TOKEN = "MTEwNTMwNTg2NTM1NzExNTUwMw.GbE76-.yh0GFkaPP25Oa2Hlp1zO_2nafHYOxwET9t8Evs"
@@ -20,6 +18,7 @@ async def on_ready():
   print("Starting up...")
   global channel
   channel = bot.get_channel(1105583257690579014)
+  postedchannel = bot.get_channel(1111028823727816765)
   print("channel grabbed!")
   global colobj
   colobj = dbapi.collectionobject()
@@ -33,19 +32,20 @@ async def on_ready():
   while True:
     kwsize = colobj.findconfig({})
     kwsize = len(kwsize["Keywords"])
+    conf = colobj.findconfig({})
     print("loop entered successfully!")
-    print(colobj.findconfig({}))
+    print(conf)
     if kwsize != 0:
       print("scraping...")
-      margin = colobj.findconfig({})["Smargin"]
+      margin = conf["Smargin"]
       kw = colobj.findconfig({})["Keywords"]
       pducts = await stockx.monitor(colobj,margin,kw)
       print(pducts)
       if len(pducts) != 0:
-        await channel.send(content="Citrine found a item!")
+        await channel.send(content="@here Citrine found a item!")
         for entry in pducts:
           emb = embeds.create_embed(entry)
-          await channel.send(embed=emb)
+          await postedchannel.send(embed=emb)
     await asyncio.sleep(60)
   
 

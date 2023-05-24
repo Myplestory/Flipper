@@ -4,7 +4,7 @@ import pymongo
 class collectionobject:
   def __init__(self):
     dbclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    collectionobject = dbclient["Citrinev5"]
+    collectionobject = dbclient["Citrinev8"]
     self.stockx = collectionobject["Stockx"]
     self.goat = collectionobject["Goat"]
     self.config = collectionobject["Config"]

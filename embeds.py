@@ -7,8 +7,11 @@ def create_embed(mapping):
   )
   embed.add_field(
     name="Margin detected -> " + str(mapping["Margin"]) + "%",
-    value="Previous listing -> $"+str(mapping["prevlisting"])+"\n"+"Newest listing -> $"+str(mapping["lowest"]),
+    value="Previous listing -> $"+str(mapping["prevlisting"])+"\n"+"Newest listing -> $"+str(mapping["lowest"]) + "\n" + "Link -> "+ str(mapping["link"]),
     inline=True
+  )
+  embed.set_image(
+    url=mapping["src"]
   )
   return embed
 
