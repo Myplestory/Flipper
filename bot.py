@@ -1,4 +1,5 @@
 import stockx
+import goat
 import embeds
 import discord
 import asyncio
@@ -18,7 +19,8 @@ async def on_ready():
   print("Starting up...")
   global channel
   channel = bot.get_channel(1105583257690579014)
-  postedchannel = bot.get_channel(1111028823727816765)
+  postedchannels = bot.get_channel(1112452953392042074)
+  postedchannelg = bot.get_channel(1111028823727816765)
   print("channel grabbed!")
   global colobj
   colobj = dbapi.collectionobject()
@@ -38,15 +40,21 @@ async def on_ready():
     if kwsize != 0:
       print("scraping...")
       margin = conf["Smargin"]
+      margin2 = conf["Gmargin"]
       kw = colobj.findconfig({})["Keywords"]
-      pducts = await stockx.monitor(colobj,margin,kw)
-      print(pducts)
-      if len(pducts) != 0:
-        await channel.send(content="@here Citrine found a item!")
-        for entry in pducts:
+      pducts1 = await stockx.monitor(colobj,margin,kw)
+      pducts2 = await goat.monitor(colobj,margin2,kw)
+      if len(pducts1) != 0:
+       await postedchannels.send(content="@here")
+       for entry in pducts1:
+         emb = embeds.create_embed(entry)
+         await postedchannels.send(embed=emb)
+      if len(pducts2) != 0:
+        await postedchannelg.send(content="@here")
+        for entry in pducts2:
           emb = embeds.create_embed(entry)
-          await postedchannel.send(embed=emb)
-    await asyncio.sleep(60)
+          await postedchannelg.send(embed=emb)
+      await asyncio.sleep(120)
   
 
 
@@ -59,7 +67,7 @@ async def setmargin(ctx,*args):
     if args[0] == "s":
       colobj.updateconfig({},{"$set":{"Smargin":args[1]}})
     if args[0] == "g":
-      colobj.updateconfig({"ID":"Config"},{"$set":{"Gmargin":args[1]}})
+      colobj.updateconfig({},{"$set":{"Gmargin":args[1]}})
     await channel.send("Margins set successfully!")
 
 @bot.command()

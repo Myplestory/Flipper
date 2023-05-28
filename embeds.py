@@ -10,9 +10,10 @@ def create_embed(mapping):
     value="Previous listing -> $"+str(mapping["prevlisting"])+"\n"+"Newest listing -> $"+str(mapping["lowest"]) + "\n" + "Link -> "+ str(mapping["link"]),
     inline=True
   )
-  embed.set_image(
-    url=mapping["src"]
-  )
+  if mapping["src"] != "N/A":
+    embed.set_image(
+      url=mapping["src"]
+    )
   return embed
 
 def create_dash(conf):

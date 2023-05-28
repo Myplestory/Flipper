@@ -20,9 +20,9 @@ async def monitor(col,margin,kw):
     for k in kw:
       urlq = k.replace(" ","+")
       page = await Grab(session,stockxurl+urlq)
-      print("Page grabbed!")
+      print("Stockx Page grabbed!")
       soup = BeautifulSoup(page,'html.parser')
-      print("Soup created!")
+      print("Stockx Soup created!")
       # all product divs
       productlist = soup.find_all('div',{'class' : "css-pnc6ci"})
       retval = []
@@ -39,7 +39,6 @@ async def monitor(col,margin,kw):
         print("name -> " + name)
         newlowestlist = product.find_all("p", {"class": "chakra-text css-nsvdd9"})
         newlowest = int(newlowestlist[0].contents[0][1:].strip().replace(',',''))
-        
         #if nonexist, add to db/identify with kw used to find
         if col.countstockx({"name": name}) == 0:
           post = {
