@@ -44,11 +44,13 @@ async def on_ready():
       kw = colobj.findconfig({})["Keywords"]
       pducts1 = await stockx.monitor(colobj,margin,kw)
       pducts2 = await goat.monitor(colobj,margin2,kw)
+      #posting stockx finds
       if len(pducts1) != 0:
        await postedchannels.send(content="@here")
        for entry in pducts1:
          emb = embeds.create_embed(entry)
          await postedchannels.send(embed=emb)
+      #posting goat finds
       if len(pducts2) != 0:
         await postedchannelg.send(content="@here")
         for entry in pducts2:

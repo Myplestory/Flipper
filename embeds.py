@@ -3,7 +3,7 @@ import discord
 def create_embed(mapping):
   embed = discord.Embed(
     title=mapping["name"],
-    description="~~~~~~~~~~~~~~~~~~~~~~",
+    description="--------------------------------",
   )
   embed.add_field(
     name="Margin detected -> " + str(mapping["Margin"]) + "%",

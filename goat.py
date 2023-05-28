@@ -1,15 +1,13 @@
-import aiohttp
 import asyncio
-import time
-import json
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 import dbapi
 from bs4 import BeautifulSoup
 
+#Neccessary info for posting via selenium
 goaturl = "https://www.goat.com/search?query="
-urlz = "https://www.goat.com/search?query=dunk+low"
 prefixurl = "https://www.goat.com"
+headers = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.517 Safari/537.36'
 
 
 def __init__():
@@ -26,8 +24,7 @@ async def monitor(col,margin,kw):
       urlq = k.replace(" ","+")
       # Using Selenium to scroll to end of queried page
       options = Options()
-      user_agent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.517 Safari/537.36'
-      options.add_argument('user-agent={0}'.format(user_agent))
+      options.add_argument('user-agent={0}'.format(headers))
       options.add_argument("--headless")
       driver = webdriver.Chrome('/tmp/chromedriver',options=options)
       driver.get(goaturl+urlq)
@@ -78,8 +75,6 @@ async def monitor(col,margin,kw):
           oldlowest = fetched["lowest"]
           src = fetched["img"]
           link = fetched["link"]
-          print("Newlowest -> " + str(newlowest))
-          print("Oldlowest -> "+ str(oldlowest))
           print("margin percentage -> " + str((100-int(margin))/100))
           print("calculated percentage -> "+ str(newlowest/oldlowest))
           percentage = (100-int(margin))/100

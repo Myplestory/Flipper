@@ -1,6 +1,5 @@
 import aiohttp
 import asyncio
-import json
 import dbapi
 from bs4 import BeautifulSoup
 
@@ -13,6 +12,10 @@ def init():
   Stockx = dbapi.collectionobject("Stockx")
   print("Stockx collection loaded! "+ str(Stockx.count({})) +" Items in Stockx")
   return Stockx
+
+async def Grab(sess,fullurl):
+  async with sess.get(fullurl,headers=headers) as response:
+    return await response.text()
   
 async def monitor(col,margin,kw):
   async with aiohttp.ClientSession() as session:
@@ -36,7 +39,6 @@ async def monitor(col,margin,kw):
         name = namelist[0].contents[0]
         #imagediv
         image = linkdiv.div.div.div.img["src"]
-        print("name -> " + name)
         newlowestlist = product.find_all("p", {"class": "chakra-text css-nsvdd9"})
         newlowest = int(newlowestlist[0].contents[0][1:].strip().replace(',',''))
         #if nonexist, add to db/identify with kw used to find
@@ -56,8 +58,6 @@ async def monitor(col,margin,kw):
           oldlowest = fetched["lowest"]
           src = fetched["img"]
           link = fetched["link"]
-          print("Newlowest -> " + str(newlowest))
-          print("Oldlowest -> "+ str(oldlowest))
           print("margin percentage -> " + str((100-int(margin.strip().replace("'","")))/100))
           print("calculated percentage -> "+ str(newlowest/oldlowest))
           percentage = (100-int(margin.strip().replace("'","")))/100
@@ -78,6 +78,3 @@ async def monitor(col,margin,kw):
       return retval
       
  
-async def Grab(sess,fullurl):
-  async with sess.get(fullurl,headers=headers) as response:
-    return await response.text()
