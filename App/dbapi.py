@@ -3,22 +3,24 @@ import pymongo
 #db constructor
 class collectionobject:
   def __init__(self):
-    dbclient = pymongo.MongoClient("mongodb://localhost:27017/")
-    collectionobject = dbclient["Citrinev8"]
+    #Connect to MongoDB -> 
+    dbclient = pymongo.MongoClient("")
+    collectionobject = dbclient[""]
+    #Collections -> 
     self.stockx = collectionobject["Stockx"]
     self.goat = collectionobject["Goat"]
     self.config = collectionobject["Config"]
-  # default configure
+  # Default configure
   def configure(self,query):
     self.insertconfig(query)
-  # counts
+  # Counts
   def countstockx(self,query):
       return self.stockx.count_documents(query)
   def countgoat(self,query):
       return self.goat.count_documents(query)
   def countconfig(self,query):
       return self.config.count_documents(query)
-  # finds
+  # Finds
   def findstockx(self,query):
       return self.stockx.find_one(query)
   def findgoat(self,query):
@@ -39,11 +41,17 @@ class collectionobject:
     self.goat.delete_one(query)
   def removeconfig(self,query):
     self.config.delete_one(query)
-  # updates
+  # Updates
   def updatestockx(self,key,query):
       self.stockx.find_one_and_update(key,query, upsert = False)
   def updategoat(self,key,query):
       self.goat.find_one_and_update(key,query, upsert = False)
   def updateconfig(self,key,query):
       self.config.find_one_and_update(key,query)
+  #Purge based on kw
+  #This is neccessary to ensure latest sale data is accurate before monitoring again
+  def purgestockx(self,query):
+      self.stockx.delete_many(query)
+  def purgegoat(self,query):    
+      self.goat.delete_many(query)
     
