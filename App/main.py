@@ -12,11 +12,11 @@ TOKEN = ""
 #Setting Intents
 intents = discord.Intents.default()
 intents.messages = True
-
+ 
 #Set bot command prefix ->
 bot = commands.Bot(command_prefix='',help_command=None,case_insensitive=True,intents=intents)
 
-#Init Boot
+#Init Boot 
 @bot.event
 async def on_ready():
   global channel

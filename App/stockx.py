@@ -9,14 +9,14 @@ from bs4 import BeautifulSoup
 stockxurl = "https://stockx.com/search/recent-asks?s="
 prefixurl = "https://stockx.com"
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'}
-
+ 
 #Loads the database object into Stockx
 def init():
   global Stockx
   Stockx = dbapi.collectionobject("Stockx")
   return Stockx
 
-#Aiohttp
+#Aiohttp 
 async def Grab(sess,fullurl):
   async with sess.get(fullurl,headers=headers) as response:
     return await response.text()

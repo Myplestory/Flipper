@@ -1,5 +1,5 @@
 import discord
-
+ 
 #Found Item Embed
 def create_embed(mapping):
   embed = discord.Embed(

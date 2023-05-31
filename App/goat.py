@@ -10,13 +10,12 @@ from bs4 import BeautifulSoup
 goaturl = "https://www.goat.com/search?query="
 prefixurl = "https://www.goat.com"
 headers = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.517 Safari/537.36'
-
+ 
 #Loads the database object into Goat
 def __init__():
   global Goat
   Goat = dbapi.collectionobject("Goat")
   return Goat
-
 
 
 async def monitor(col,margin,kw):

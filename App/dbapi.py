@@ -1,5 +1,5 @@
 import pymongo
-
+ 
 #db constructor
 class collectionobject:
   def __init__(self):
